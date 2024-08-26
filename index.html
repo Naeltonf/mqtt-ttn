@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MQTT Data Receiver</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+    <h1>MQTT Data Receiver</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Device Address (dev_addr)</th>
+                <th>Payload</th>
+            </tr>
+        </thead>
+        <tbody id="mqtt-data">
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('/mqtt-data');
+                const data = await response.json();
+                const tableBody = document.getElementById('mqtt-data');
+                tableBody.innerHTML = '';
+
+                data.forEach(entry => {
+                    const row = document.createElement('tr');
+                    const devAddrCell = document.createElement('td');
+                    const payloadCell = document.createElement('td');
+
+                    devAddrCell.textContent = entry.dev_addr;
+                    payloadCell.textContent = entry.payload;
+
+                    row.appendChild(devAddrCell);
+                    row.appendChild(payloadCell);
+                    tableBody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        setInterval(fetchData, 5000);
+
+        fetchData();
+    </script>
+</body>
+</html>
